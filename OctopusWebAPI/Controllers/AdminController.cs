@@ -8,5 +8,9 @@ namespace OctopusWebAPI.Controllers
         {
             return View();
         }
+        public IActionResult View()
+        {
+            return View();
+        }
     }
 }
