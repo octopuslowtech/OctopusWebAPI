@@ -1,13 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using OctopusWebAPI.Data;
+using OctopusWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
- builder.Services.AddDbContext<MyOctpDBContext>(options => 
- options.UseSqlServer(builder.Configuration.GetConnectionString("MyDB")));
+builder.Services.AddDbContext<MyOctpDBContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("MyDB")));
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -16,7 +19,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
- 
+
 app.UseAuthorization();
 
 app.MapControllers();

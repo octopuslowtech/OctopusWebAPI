@@ -1,21 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OctopusWebAPI.Data;
+using OctopusWebAPI.Services;
 
 namespace OctopusWebAPI.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
-        private readonly MyOctpDBContext _myOctpDBContext;
-        public UserController(MyOctpDBContext myOctpDBContext)
+        private readonly IUserService _service;
+
+        public UserController(IUserService service)
         {
-            _myOctpDBContext = myOctpDBContext;
+            _service = service;
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateNew(UserInfo user)
+        [HttpPost("CreateNew")]
+        public async Task<IActionResult> CreateNew([FromBody] UserInfo user)
         {
-            if (user.UserName.Length < 1 && user.Password.Length < 1)
+            if (user.UserName.Length < 1 || user.Password.Length < 1)
                 return Ok(new
                 {
                     Username = user.UserName,
@@ -24,12 +26,11 @@ namespace OctopusWebAPI.Controllers
                 });
             try
             {
-                await _myOctpDBContext.AddAsync(user);
-                await _myOctpDBContext.SaveChangesAsync();
+                var _user = await _service.CreateNew(user);
                 return Ok(new
                 {
-                    Username = user.UserName,
-                    Password = user.Password,
+                    Username = _user.UserName,
+                    Password = _user.Password,
                     Message = "Create Success"
                 });
             }
@@ -39,24 +40,17 @@ namespace OctopusWebAPI.Controllers
                 Message = "Error when create"
             });
         }
-        [HttpPost]
-        public async Task<IActionResult> Login(UserInfo user)
+
+
+        [HttpPost("GetAllUser")]
+        public async Task<IActionResult> GetAllUser()
         {
-            if (user.UserName.Length < 1 && user.Password.Length < 1)
-                return Ok(new
-                {
-                    Message = "Fail"
-                });
             try
             {
-                var cakes = _myOctpDBContext.UserInfo.SingleOrDefault(p => p.);
-                
-
-                var _user = _myOctpDBContext.UserInfo.Where(p => p.UserName == user.UserName && p.Password == user.Password).ToList();
-                 return Ok(new
+                var _user = await _service.GetAllUser();
+                return Ok(new
                 {
-                    Username = user.UserName,
-                    Password = user.Password,
+                    _user,
                     Message = "Create Success"
                 });
             }

@@ -3,6 +3,8 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OtpNet;
 using System.Drawing;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace OctopusWebAPI.Data
 {
@@ -48,6 +50,13 @@ namespace OctopusWebAPI.Data
             
 
             return new Point();
+        }
+        public static string Encrypt(string password)
+        {
+            var provider = MD5.Create();
+            string salt = "Oct@pusr@nd3m";
+            byte[] bytes = provider.ComputeHash(Encoding.UTF32.GetBytes(salt + password));
+            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
         }
         public static async Task<string> GetTWOFACode(string twofa)
         {
