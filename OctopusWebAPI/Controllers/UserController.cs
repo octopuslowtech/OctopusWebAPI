@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using OctopusWebAPI.Data;
 using OctopusWebAPI.Services;
 
@@ -40,8 +41,6 @@ namespace OctopusWebAPI.Controllers
                 Message = "Error when create"
             });
         }
-
-
         [HttpPost("GetAllUser")]
         public async Task<IActionResult> GetAllUser()
         {
@@ -58,6 +57,46 @@ namespace OctopusWebAPI.Controllers
             return BadRequest(new
             {
                 Message = "Error when create"
+            });
+        }
+
+        [HttpPost("UploadBackup")]
+        public async Task<IActionResult> UploadBackup(IFormFile file)
+        {
+            try
+            {
+                if(await Extention.WriteFile(file))
+                {
+                    return Ok(new
+                    {
+                        Message = "Upload Success"
+                    });
+                }
+            }
+            catch { }
+            return BadRequest(new
+            {
+                Message = "Error when Upload"
+            });
+        }
+
+        [HttpGet("DownloadBackup/{id}")]
+        public async Task<IActionResult> DownloadBackup(string id)
+        {
+            try
+            {
+                var path2 = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\backup\\" + id);
+                var isFile = System.IO.File.Exists(path2);
+                var fileName = System.IO.Path.GetFileName(path2);
+                var content = await System.IO.File.ReadAllBytesAsync(path2);
+                new FileExtensionContentTypeProvider()
+                    .TryGetContentType(fileName, out string contentType);
+                return File(content, contentType, fileName);
+            }
+            catch { }
+            return BadRequest(new
+            {
+                Message = "Error when Download"
             });
         }
     }

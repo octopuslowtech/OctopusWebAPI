@@ -1,6 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using Microsoft.AspNetCore.Mvc;
 using OtpNet;
 using System.Drawing;
 using System.Security.Cryptography;
@@ -10,6 +11,34 @@ namespace OctopusWebAPI.Data
 {
     public class Extention
     {
+        public static async Task<bool> WriteFile(IFormFile file)
+        {
+            try
+            {
+                var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\backup");
+                if (!Directory.Exists(pathBuilt))
+                {
+                    Directory.CreateDirectory(pathBuilt);
+                }
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\backup",
+                   file.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                
+            }
+
+            return false;
+        }
+
+         
+
+
         public static async Task<Point> CaptchaDemo(string base64String)
         {
             try
