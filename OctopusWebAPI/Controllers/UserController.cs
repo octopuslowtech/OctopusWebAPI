@@ -14,6 +14,7 @@ namespace OctopusWebAPI.Controllers
         public UserController(IUserService service)
         {
             _service = service;
+
         }
         [HttpPost("CreateNew")]
         public async Task<IActionResult> CreateNew([FromBody] UserInfo user)
@@ -63,12 +64,13 @@ namespace OctopusWebAPI.Controllers
         [HttpPost("UploadBackup")]
         public async Task<IActionResult> UploadBackup(IFormFile file)
         {
-            try
-            {
+             try
+             {
                 if(await Extention.WriteFile(file))
                 {
                     return Ok(new
                     {
+                        id = file.FileName.Replace(" ",""),
                         Message = "Upload Success"
                     });
                 }
@@ -85,8 +87,14 @@ namespace OctopusWebAPI.Controllers
         {
             try
             {
-                var path2 = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\backup\\" + id);
-                var isFile = System.IO.File.Exists(path2);
+                var path2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\backup\\" + id);
+                if (!System.IO.File.Exists(path2))
+                    return BadRequest(new
+                    {
+                        id = id,
+                        Message = "Error when Download"
+                    });
+
                 var fileName = System.IO.Path.GetFileName(path2);
                 var content = await System.IO.File.ReadAllBytesAsync(path2);
                 new FileExtensionContentTypeProvider()
@@ -96,6 +104,7 @@ namespace OctopusWebAPI.Controllers
             catch { }
             return BadRequest(new
             {
+                id = id,
                 Message = "Error when Download"
             });
         }

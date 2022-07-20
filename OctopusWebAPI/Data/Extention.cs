@@ -15,14 +15,12 @@ namespace OctopusWebAPI.Data
         {
             try
             {
-                var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\backup");
-                if (!Directory.Exists(pathBuilt))
+                 string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\backup");
+                if (!Directory.Exists(path))
                 {
-                    Directory.CreateDirectory(pathBuilt);
+                    Directory.CreateDirectory(path);
                 }
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\backup",
-                   file.FileName);
-                using (var stream = new FileStream(path, FileMode.Create))
+                using (var stream = new FileStream(Path.Combine(path, file.FileName.Replace(" ", "")), FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
