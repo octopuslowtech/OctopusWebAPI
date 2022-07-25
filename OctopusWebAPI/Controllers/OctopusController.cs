@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OctopusWebAPI.Data;
 using System.Diagnostics;
 
@@ -9,6 +10,7 @@ namespace OctopusWebAPI.Controllers
     public class OctopusController : Controller
     {
         [HttpPost("Captcha")]
+        [Authorize]
         public async Task<IActionResult> Captcha([FromBody] string base64string)
         {
             Stopwatch stopWatch = Stopwatch.StartNew();
@@ -35,7 +37,9 @@ namespace OctopusWebAPI.Controllers
                 Message = "Success"
             });
         }
+ 
         [HttpGet("Get2FA")]
+        [Authorize]
         public async Task<IActionResult> Get2FA(string twofa)
         {
             if(twofa.Length < 1)

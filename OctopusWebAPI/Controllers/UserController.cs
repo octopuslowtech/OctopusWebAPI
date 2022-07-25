@@ -1,7 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.IdentityModel.Tokens;
+using OctopusModel;
 using OctopusWebAPI.Data;
-using OctopusWebAPI.Services;
+using OctopusWebAPI.Entities;
+using OctopusWebAPI.Repositories;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace OctopusWebAPI.Controllers
 {
@@ -9,59 +18,65 @@ namespace OctopusWebAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _service;
-
-        public UserController(IUserService service)
+        private readonly IUserRepository _service;
+        private readonly IConfiguration _configuration;
+        public UserController(IUserRepository service, IConfiguration configuration) 
         {
             _service = service;
+            _configuration = configuration;
+        }
 
-        }
-        [HttpPost("CreateNew")]
-        public async Task<IActionResult> CreateNew([FromBody] UserInfo user)
+        [HttpPost("Login")]
+        public async Task<ActionResult> Login([FromBody] UserModel usermodel)
         {
-            if (user.UserName.Length < 1 || user.Password.Length < 1)
-                return Ok(new
+            var user = await _service.Login(new Entities.User
+            {
+                UserID = usermodel.UserID,
+                Password = usermodel.Password,
+            });
+            if(user == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+            try
+            {
+                RefreshToken refreshToken = GenerateRefreshToken();
+                refreshToken.TokenId = Guid.NewGuid();
+                refreshToken.UserID = user.UserID;
+                await _service.AddRefreshToken(refreshToken);
+                var AccessToken = GenerateAccessToken(user);
+                return Ok(new { message = "success", id = user.UserID, accesstoken = AccessToken, refreshtoken = refreshToken.Token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        [HttpPost("Create")]
+        public async Task<ActionResult> Create([FromBody] UserModel user)
+        {
+            if (user == null)
+                return BadRequest(new { message = "Error value" });
+            try
+            {
+                var user2 = await _service.CreateNewUser(new Entities.User
                 {
-                    Username = user.UserName,
+                    UserID = user.UserID,
                     Password = user.Password,
-                    Message = "Error when create"
+                    DateCreate = DateTime.Now,
                 });
-            try
-            {
-                var _user = await _service.CreateNew(user);
-                return Ok(new
-                {
-                    Username = _user.UserName,
-                    Password = _user.Password,
-                    Message = "Create Success"
-                });
+                 if (user2 == null)
+                    return BadRequest(new { message = "Error when create" });
+                 return Ok(new {message = "success", id = user2.UserID, password = user2.Password});
             }
-            catch { }
-            return BadRequest(new
+            catch(Exception ex)
             {
-                Message = "Error when create"
-            });
-        }
-        [HttpPost("GetAllUser")]
-        public async Task<IActionResult> GetAllUser()
-        {
-            try
-            {
-                var _user = await _service.GetAllUser();
-                return Ok(new
-                {
-                    _user,
-                    Message = "Create Success"
-                });
+                return BadRequest(new { message = ex.Message });
             }
-            catch { }
-            return BadRequest(new
-            {
-                Message = "Error when create"
-            });
+            return NotFound();
+
         }
 
         [HttpPost("UploadBackup")]
+        [Authorize]
         public async Task<IActionResult> UploadBackup(IFormFile file)
         {
              try
@@ -83,6 +98,7 @@ namespace OctopusWebAPI.Controllers
         }
 
         [HttpGet("DownloadBackup/{id}")]
+        [Authorize]
         public async Task<IActionResult> DownloadBackup(string id)
         {
             try
@@ -107,6 +123,38 @@ namespace OctopusWebAPI.Controllers
                 id = id,
                 Message = "Error when Download"
             });
+        }
+        private RefreshToken GenerateRefreshToken()
+        {
+            RefreshToken refreshToken = new RefreshToken();
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                refreshToken.Token = Convert.ToBase64String(randomNumber);
+            }
+            refreshToken.ExpiryDate = DateTime.UtcNow.AddDays(1);
+
+            return refreshToken;
+        }
+
+        private string GenerateAccessToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["JwtSecurityKey"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim("Phone", user.UserID),
+                    new Claim("DateCreate", user.DateCreate.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

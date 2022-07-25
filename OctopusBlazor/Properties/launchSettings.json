@@ -3,17 +3,17 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:33191",
-      "sslPort": 44349
+      "applicationUrl": "http://localhost:43175",
+      "sslPort": 44364
     }
   },
   "profiles": {
-    "OctopusBlazorWeb": {
+    "OctopusBlazor": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "https://localhost:7149;http://localhost:5149",
+      "applicationUrl": "https://localhost:7196;http://localhost:5196",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
