@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OctopusModel
 {
-    public class UserModel
+    public class LoginModel
     {
         [Required]
         [MaxLength(50)]

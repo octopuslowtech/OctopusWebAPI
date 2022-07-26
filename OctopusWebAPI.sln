@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OctopusWebAPI", "OctopusWeb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OctopusModel", "OctopusModel\OctopusModel.csproj", "{C6EE19F5-2286-43D1-83E8-2272E55C6087}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctopusBlazor", "OctopusBlazor\OctopusBlazor.csproj", "{9191BA3C-16CC-466C-A5B7-FFCA1C146E7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctopusBlazor", "OctopusBlazor\OctopusBlazor.csproj", "{37996A1F-C478-4650-8403-EAE9F07E3F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{C6EE19F5-2286-43D1-83E8-2272E55C6087}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6EE19F5-2286-43D1-83E8-2272E55C6087}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6EE19F5-2286-43D1-83E8-2272E55C6087}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9191BA3C-16CC-466C-A5B7-FFCA1C146E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9191BA3C-16CC-466C-A5B7-FFCA1C146E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9191BA3C-16CC-466C-A5B7-FFCA1C146E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9191BA3C-16CC-466C-A5B7-FFCA1C146E7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37996A1F-C478-4650-8403-EAE9F07E3F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37996A1F-C478-4650-8403-EAE9F07E3F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37996A1F-C478-4650-8403-EAE9F07E3F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37996A1F-C478-4650-8403-EAE9F07E3F18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

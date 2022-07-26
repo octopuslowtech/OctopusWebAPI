@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OctopusWebAPI.Data;
 using OctopusWebAPI.Entities;
- 
 
 namespace OctopusWebAPI.Repositories
 {
@@ -11,8 +10,6 @@ namespace OctopusWebAPI.Repositories
         Task<User> CreateNewUser(User user);
         Task<User> Login(User user);
         Task<RefreshToken> AddRefreshToken(RefreshToken token);
- 
-
     }
     public class UserRepository : IUserRepository
     {

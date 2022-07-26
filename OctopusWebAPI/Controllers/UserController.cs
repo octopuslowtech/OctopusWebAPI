@@ -27,9 +27,9 @@ namespace OctopusWebAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult> Login([FromBody] UserModel usermodel)
+        public async Task<ActionResult> Login([FromBody] LoginModel usermodel)
         {
-            var user = await _service.Login(new Entities.User
+            var user = await _service.Login(new User
             {
                 UserID = usermodel.UserID,
                 Password = usermodel.Password,
@@ -43,7 +43,7 @@ namespace OctopusWebAPI.Controllers
                 refreshToken.UserID = user.UserID;
                 await _service.AddRefreshToken(refreshToken);
                 var AccessToken = GenerateAccessToken(user);
-                return Ok(new { message = "success", id = user.UserID, accesstoken = AccessToken, refreshtoken = refreshToken.Token });
+                return Ok(new { message = "success", id = user.UserID, dateCreate = user.DateCreate, accesstoken = AccessToken, refreshtoken = refreshToken.Token });
             }
             catch (Exception ex)
             {
@@ -51,13 +51,13 @@ namespace OctopusWebAPI.Controllers
             }
         }
         [HttpPost("Create")]
-        public async Task<ActionResult> Create([FromBody] UserModel user)
+        public async Task<ActionResult> Create([FromBody] LoginModel user)
         {
             if (user == null)
                 return BadRequest(new { message = "Error value" });
             try
             {
-                var user2 = await _service.CreateNewUser(new Entities.User
+                var user2 = await _service.CreateNewUser(new User
                 {
                     UserID = user.UserID,
                     Password = user.Password,

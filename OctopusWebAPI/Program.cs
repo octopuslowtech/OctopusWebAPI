@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OctopusWebAPI.Data;
-using OctopusWebAPI.Entities;
 using OctopusWebAPI.Repositories;
 using System.Text;
 
