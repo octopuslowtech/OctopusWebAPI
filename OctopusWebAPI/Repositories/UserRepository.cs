@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OctopusModel;
 using OctopusWebAPI.Data;
 using OctopusWebAPI.Entities;
 
@@ -10,6 +11,7 @@ namespace OctopusWebAPI.Repositories
         Task<User> CreateNewUser(User user);
         Task<User> Login(User user);
         Task<RefreshToken> AddRefreshToken(RefreshToken token);
+
     }
     public class UserRepository : IUserRepository
     {
@@ -28,19 +30,23 @@ namespace OctopusWebAPI.Repositories
 
         public async Task<User> CreateNewUser(User user)
         {
+            user.Password = Utility.Encrypt(user.Password);
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;
         }
 
+        public async Task<User> GetUserFromAccessToken(string accessToken)
+        {
+            return null;
+        }
+
         public async Task<User> Login(User user)
         {
+            user.Password = Utility.Encrypt(user.Password);
             return await _context.Users.Where(u => u.UserID == user.UserID
                                                && u.Password == user.Password).FirstOrDefaultAsync();
         }
-
-        
-
         public async Task<User> Validate(User user)
         {
             return await _context.Users.FindAsync(user);

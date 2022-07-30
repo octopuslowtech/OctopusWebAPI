@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OctopusWebAPI", "OctopusWeb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OctopusModel", "OctopusModel\OctopusModel.csproj", "{C6EE19F5-2286-43D1-83E8-2272E55C6087}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctopusBlazor", "OctopusBlazor\OctopusBlazor.csproj", "{37996A1F-C478-4650-8403-EAE9F07E3F18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OctopusBlazor", "OctopusBlazor\OctopusBlazor.csproj", "{37996A1F-C478-4650-8403-EAE9F07E3F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

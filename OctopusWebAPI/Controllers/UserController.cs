@@ -25,7 +25,6 @@ namespace OctopusWebAPI.Controllers
             _service = service;
             _configuration = configuration;
         }
-
         [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginModel usermodel)
         {
@@ -43,7 +42,7 @@ namespace OctopusWebAPI.Controllers
                 refreshToken.UserID = user.UserID;
                 await _service.AddRefreshToken(refreshToken);
                 var AccessToken = GenerateAccessToken(user);
-                return Ok(new { message = "success", id = user.UserID, dateCreate = user.DateCreate, accesstoken = AccessToken, refreshtoken = refreshToken.Token });
+                return Ok(new { message = "success", UserID = user.UserID, dateCreate = user.DateCreate, accesstoken = AccessToken, refreshtoken = refreshToken.Token });
             }
             catch (Exception ex)
             {
@@ -124,6 +123,49 @@ namespace OctopusWebAPI.Controllers
                 Message = "Error when Download"
             });
         }
+
+
+
+        [HttpPost("GetUserByAccessToken")]
+        public async Task<ActionResult<User>> GetUserByAccessToken([FromBody] string accessToken)
+        {
+            User user = await GetUserFromAccessToken(accessToken);
+            if (user != null)
+            {
+                return user;
+            }
+            return null;
+        }
+        private async Task<User> GetUserFromAccessToken(string accessToken)
+        {
+            //try
+            //{
+            //    var tokenHandler = new JwtSecurityTokenHandler();
+            //    var key = Encoding.ASCII.GetBytes(_configuration["JwtSecurityKey"]);
+            //    var tokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuerSigningKey = true,
+            //        IssuerSigningKey = new SymmetricSecurityKey(key),
+            //        ValidateIssuer = false,
+            //        ValidateAudience = false
+            //    };
+            //    SecurityToken securityToken;
+            //    var principle = tokenHandler.ValidateToken(accessToken, tokenValidationParameters, out securityToken);
+            //    JwtSecurityToken jwtSecurityToken = securityToken as JwtSecurityToken;
+            //    if (jwtSecurityToken != null && jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            //    {
+            //        var userId = principle.FindFirst(ClaimTypes.Name)?.Value;
+            //        return await _context.Users.Include(u => u.Role)
+            //                            .Where(u => u.UserId == Convert.ToInt32(userId)).FirstOrDefaultAsync();
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //    return new User();
+            //}
+            return new User();
+        }
+
         private RefreshToken GenerateRefreshToken()
         {
             RefreshToken refreshToken = new RefreshToken();

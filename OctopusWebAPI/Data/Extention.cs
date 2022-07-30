@@ -1,7 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
-using Microsoft.AspNetCore.Mvc;
 using OtpNet;
 using System.Drawing;
 using System.Security.Cryptography;
@@ -70,7 +69,7 @@ namespace OctopusWebAPI.Data
                             CvInvoke.PutText(main, Math.Round(perimeter).ToString(), new Point(cX, cY), Emgu.CV.CvEnum.FontFace.HersheyTriplex, 1.0, new MCvScalar(0, 0, 255), 2);
                             return new Point(cX, cY);
                         }
-                    }
+                    } 
                 }
             }
             catch { }

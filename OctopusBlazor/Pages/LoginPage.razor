@@ -1,0 +1,105 @@
+﻿@page "/login"
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Authorization
+@using OctopusBlazor.Data
+@using OctopusBlazor.Service
+@using OctopusModel
+@using System.Security.Claims
+@layout EmptyLayout
+@inject IToastService toastService
+@inject NavigationManager NavigationManager
+@inject IUserService userService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <div class="login100-pic js-tilt" data-tilt>
+                <img src="./image/img-01.png" alt="IMG">
+            </div>
+            <EditForm Model="@loginModel" OnValidSubmit="@ValidateUser" class="login100-form validate-form">
+
+                <span class="login100-form-title">
+                    Member Login
+                </span>
+
+                <div class="wrap-input100 validate-input">
+                    <input type="text" class="input100" placeholder="Phone" @bind="loginModel.UserID" />
+
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" type="password" name="pass" placeholder="Password" @bind="loginModel.Password" />
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+
+
+
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn" type="submit">
+                        Login
+                    </button>
+                </div>
+
+
+
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="text-center p-t-136">
+                    <a class="txt2" href="https://www.facebook.com/mucmini.5/">
+                        Contacts
+                    </a>
+                </div>
+            </EditForm>
+            <form class="login100-form validate-form">
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    private LoginModel loginModel;
+    ClaimsPrincipal claimsPrincipal;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        loginModel = new LoginModel();
+        claimsPrincipal = (await authenticationStateTask).User;
+        if (claimsPrincipal.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+    private async Task ValidateUser()
+    {
+        var returnedUser = await userService.LoginAsync(loginModel);
+        if(returnedUser.UserID != null)
+        {
+            toastService.ShowSuccess("Login Success", "Info");
+            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(returnedUser);
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {            
+            toastService.ShowError("Invalid username or password");
+        }
+    }
+}
+
